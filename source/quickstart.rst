@@ -11,7 +11,7 @@ Install Prerequisites
 
 `Miniconda`_ provides the ``conda`` environment and package manager, and is the recommended way to install QIIME 2. Follow the instructions for downloading and installing Miniconda. You may choose either Miniconda2 or Miniconda3 (i.e. Miniconda Python 2 or 3). QIIME 2 will work with either version of Miniconda.
 
-After installing Miniconda and opening a new terminal, make sure you're running the latest version of ``conda`` (and get a copy of ``wget``, while you're at it):
+After installing Miniconda and opening a new terminal, make sure you're running the latest version of ``conda``. Install a copy of ``wget``, while you're at it:
 
 .. code-block:: bash
 
@@ -83,7 +83,8 @@ If you want to make changes to the `framework`_, `q2cli`_, or any of the `offici
     cd q2-taxa
 
     # Install any additional build-time dependencies needed for this project.
-    # Check ci/recipe/meta.yaml in any official QIIME 2 repository for build requirements.
+    # Check ci/recipe/meta.yaml in any official QIIME 2 repository for
+    # build requirements.
     conda install nodejs pytest flake8
 
     # Install local source in "development mode", and build any package assets.

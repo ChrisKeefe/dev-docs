@@ -1,16 +1,16 @@
 Pipelines
 =========
-A ``Pipeline`` accepts some combination of QIIME 2 ``artifacts`` and parameters as input, and produces one or more QIIME 2 artifacts and/or ``visualizations`` as output. This is accomplished by stitching together one or more :doc:`methods <methods>` and/or :doc:`visualizers <visualizers>` into a single ``pipeline``.
+A ``Pipeline`` accepts some combination of QIIME 2 ``artifacts`` and parameters as input, and produces one or more QIIME 2 artifacts and/or ``visualizations`` as output. It does so by combining one or more :doc:`methods <methods>` and/or :doc:`visualizers <visualizers>` within a single registered ``pipeline``.
 
 Create a function to register as a Pipeline
 -------------------------------------------
-Defining a function that can be registered as a ``Pipeline`` is very similar to defining one that can be registered as a :doc:`Method <methods>` with a few distinctions.
+Defining a function that can be registered as a ``Pipeline`` is very similar to defining one that can be registered as a :doc:`Method <methods>` with a few distinctions:
 
-First, ``pipelines`` do not use function annotations and instead receive ``Artifact`` objects as input and return ``Artifact`` and/or ``Visualization`` objects as output.
+1. ``pipelines`` do not use function annotations and instead receive ``Artifact`` objects as input and return ``Artifact`` and/or ``Visualization`` objects as output.
+2. ``Pipelines`` must have ``ctx`` as their first parameter. It provides the following API:
 
-Second, ``Pipelines`` must have ``ctx`` as their first parameter, it provides the following API:
-* ``ctx.get_action(plugin: str, action: str)`` this returns a “sub-action” that can be called like a normal Artifact API call.
-* ``ctx.make_artifact(type, view, view_type=None)`` this has the same behavior as Artifact.import_data. It is wrapped by ctx for pipeline book-keeping.
+   - ``ctx.get_action(plugin: str, action: str)`` returns a “sub-action” that can be called like a normal Artifact API call.
+   - ``ctx.make_artifact(type, view, view_type=None)`` has the same behavior as Artifact.import_data. It is wrapped by ctx for pipeline book-keeping.
 
 Let's take a look at ``q2_diversity.core_metrics`` for a salient example of a function that we can register as a ``pipeline``:
 
@@ -22,43 +22,41 @@ Let's take a look at ``q2_diversity.core_metrics`` for a salient example of a fu
        beta = ctx.get_action('diversity', 'beta')
        pcoa = ctx.get_action('diversity', 'pcoa')
        emperor_plot = ctx.get_action('emperor', 'plot')
-   
+
        results = []
        rarefied_table, = rarefy(table=table, sampling_depth=sampling_depth)
        results.append(rarefied_table)
-   
+
        for metric in 'observed_otus', 'shannon', 'pielou_e':
            results += alpha(table=rarefied_table, metric=metric)
-   
+
        dms = []
        for metric in 'jaccard', 'braycurtis':
            beta_results = beta(table=rarefied_table, metric=metric, n_jobs=n_jobs)
            results += beta_results
            dms += beta_results
-   
+
        pcoas = []
        for dm in dms:
            pcoa_results = pcoa(distance_matrix=dm)
            results += pcoa_results
            pcoas += pcoa_results
-   
+
        for pcoa in pcoas:
            results += emperor_plot(pcoa=pcoa, metadata=metadata)
-   
+
        return tuple(results)
 
 
 Registering a Pipeline
 ----------------------
-Registering ``Pipelines`` is the same as registering :doc:`Methods <methods>`, with a few exceptions.
+Registering ``Pipelines`` is the same as registering :doc:`Methods <methods>`, with a few exceptions:
 
-First, we register a `Pipeline` by calling ``plugin.pipelines.register_function``.
+1. Register a `Pipeline` by calling ``plugin.pipelines.register_function``.
+2. ``Visualizations`` produced as outputs are listed in ``outputs`` as ``tuples`` with ``Visualization`` as the second value. E.g., ``('jaccard_emperor', Visualization)``. A description of this output should be included in ``output_descriptions``
+3. Do not add citations to pipelines unless unique citations are required for the pipeline that are not appropriate for the underlying ``methods`` and ``visualizers`` it calls. Citations for these underlying actions are automatically logged in pipeline citation provenance.
 
-Second,``visualizations`` produced as an output are listed in ``outputs`` as a ``tuple`` with ``Visualization`` as the second value. E.g., ``('jaccard_emperor', Visualization)``. A description of this output should be included in ``output_descriptions``
-
-Citations do not need to be added for the pipeline unless if unique citations are required for the pipeline that are not appropriate for the underlying ``methods`` and ``visualizers`` that it calls. Citations for these underlying actions are automatically logged in citation provenance for this pipeline.
-
-As an example for registering a ``pipeline``, we can look at ``q2_diversity.core_metrics``:
+Look at ``q2_diversity.core_metrics`` for an example of ``pipeline`` registration:
 
 .. code-block:: python
 
@@ -116,4 +114,3 @@ As an example for registering a ``pipeline``, we can look at ``q2_diversity.core
        description=("Applies a collection of diversity metrics "
                     "(non-phylogenetic) to a feature table.")
    )
-   

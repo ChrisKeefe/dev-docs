@@ -5,13 +5,13 @@ QIIME 2 plugins are separate software packages that define domain-specific funct
 
 Overview
 --------
-There are several high-level steps to creating a QIIME 2 plugin:
+There are several high-level requirements for creating a QIIME 2 plugin:
 
-1. A QIIME 2 plugin must define one or more Python 3 functions that will be accessible through QIIME. 
-2. The plugin must be a Python 3 package that can be installed with ``setuptools``.
-3. The plugin must then instantiate a ``qiime2.plugin.Plugin`` object and define some information including the name of the plugin and its URL. In the plugin package’s ``setup.py`` file, this instance will be defined as an `entry point`.
-4. The plugin must then register its functions as QIIME 2 :doc:`Actions <actions/index>`, which will be accessible to users through any of the QIIME 2 interfaces.
-5. Optionally, the plugin should be distributed through `Anaconda`_, as that will simplify its installation for QIIME 2 users (since that is the supported mechanism for installing QIIME 2).
+1. Plugins must define one or more Python 3 functions accessible through QIIME 2. 
+2. Plugins must be Python 3 packages that can be installed with ``setuptools``.
+3. Plugins must instantiate a ``qiime2.plugin.Plugin`` object and define some information including the name of the plugin and its URL. In the plugin package’s ``setup.py`` file, this instance will be defined as an `entry point`.
+4. Plugins must then register their functions as QIIME 2 :doc:`Actions <actions/index>`, which are accessible to users through any of the QIIME 2 interfaces.
+5. Optionally, plugins should be distributed through `Anaconda`_. This will simplify installation for QIIME 2 users (since Anaconda is the supported mechanism for installing QIIME 2).
 
 These steps are covered in detail below.
 
@@ -48,7 +48,7 @@ The ``name`` parameter is the name that users will use to access your plugin fro
 
 ``version`` should be the version number of your package (the same that is used in its ``setup.py``).
 
-``website`` should be the page where you'd like end users to refer for more information about your package.
+``website`` should be the page end users refer to for more information about your package.
 
 ``package`` should be the Python package name for your plugin.
 
@@ -58,7 +58,7 @@ The ``name`` parameter is the name that users will use to access your plugin fro
 
 While not shown in the previous example, plugin developers can optionally provide the following parameters to ``qiime2.plugin.Plugin``:
 
-* ``citations``: A list of bibtex-formatted citations. These are provided in a separate ``citations.bib`` file, loaded via the ``Citations`` API, and accessed by using their bibtex indices as keys. Citations can be listed during plugin or action registration, or both, but will usually only be listed for individual actions unless if a single reference is appropriate for all actions in that plugin. ``q2-diversity`` has no such plugin-wide citation listed here, but a ``citations`` example is given for :doc:`method registration <actions/methods>`.
+* ``citations``: A list of bibtex-formatted citations. These are provided in a separate ``citations.bib`` file, loaded via the ``Citations`` API, and accessed by using their bibtex indices as keys. Citations can be listed during plugin or action registration, or both, but will usually only be listed for individual actions unless a single reference is appropriate for all actions in that plugin. ``q2-diversity`` has no such plugin-wide citation listed here, but a ``citations`` example is given for :doc:`method registration <actions/methods>`.
 
 * ``user_support_text``: free text describing how users should get help with the plugin (e.g. issue tracker, StackOverflow tag, mailing list, etc.). If not provided, users are referred to the ``website`` for support. We encourage plugin developers to support their plugins on the QIIME 2 Forum, so you can include that URL as the ``user_support_text`` for your plugin. If you do that, you should get in the habit of monitoring the QIIME 2 Forum for technical support questions.
 
@@ -79,7 +79,10 @@ Finally, you need to tell QIIME where to find your instantiated ``Plugin`` objec
        }
    )
 
-The relevant key in the ``entry_points`` dictionary will be ``'qiime2.plugins'``, and the value will be a single element list containing a string formatted as ``<distribution-name>=<import-path>:<instance-name>``. ``<distribution-name>`` is the name of the Python package distribution (matching the value passed for ``name`` in this call to ``setup``); ``<import-path>`` is the import path for the ``Plugin`` instance you created above; and ``<instance-name>`` is the name for the ``Plugin`` instance you created above.
+The relevant key in the ``entry_points`` dictionary will be ``'qiime2.plugins'``, and the value will be a single-element list containing a string formatted as ``<distribution-name>=<import-path>:<instance-name>``.
+* ``<distribution-name>`` is the name of the Python package distribution (matching the value passed for ``name`` in this call to ``setup``)
+* ``<import-path>`` is the import path for the ``Plugin`` instance you created above
+* ``<instance-name>`` is the name for the ``Plugin`` instance you created above.
 
 Registering actions
 -------------------
@@ -96,5 +99,3 @@ See the :doc:`metadata documentation <metadata>` for information about :term:`pr
 .. _q2-emperor: https://github.com/qiime2/q2-emperor
 .. _Emperor: https://github.com/biocore/emperor
 .. _q2-diversity: https://github.com/qiime2/q2-diversity
-
-

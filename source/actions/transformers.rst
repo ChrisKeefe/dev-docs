@@ -1,12 +1,14 @@
 Transformers
 ============
-``Transformers`` are functions for converting :term:`Semantic Type` objects into other formats that can be consumed by python functions. These transformers are typically defined along with the ``Semantic Types`` for which they are designed, and ``q2-types`` provides a number of common ``Types`` and their transformers. Plugins often define new semantic types and/or transformers that are not covered by these core ``Types``.
+``Transformers`` are functions for converting :term:`Semantic Type` objects into other formats that can be consumed by python functions. These transformers are typically defined along with the ``Semantic Types`` for which they are designed, and ``q2-types`` provides a number of common ``Types`` and their transformers.
+
+Plugins often define new semantic types and/or transformers that are not covered by these core ``Types``.
 
 How are transformers used by a plugin?
 --------------------------------------
-``Transformers`` are not called directly at any time within a plugin. This process is handled by the QIIME 2 framework, as long as the appropriate ``transformers`` are registered in that plugin. The framework interprets the input :term:`Artifact` source format and destination format from a ``plugin``'s registration and functional annotation, respectively. Upon output from a :term:`Method`, the framework interprets the source format (function output) and the ``Semantic Type`` of the desination ``Artifact`` from the ``plugin`` functional annotation and registration, respectively.
+``Transformers`` are never called directly within a plugin. This process is handled by the QIIME 2 framework, as long as the appropriate ``transformers`` are registered in that plugin. The framework interprets the input :term:`Artifact` source format and destination format from a ``plugin``'s registration and functional annotation, respectively. Upon output from a :term:`Method`, the framework interprets the source format (function output) and the ``Semantic Type`` of the desination ``Artifact`` from the ``plugin`` functional annotation and registration, respectively.
 
-For example, we can see how functional annotations define input and output formats in ``q2_diversity.beta_phylogenetic``:
+See, for example, how functional annotations define input and output formats in ``q2_diversity.beta_phylogenetic``:
 
 .. code-block:: python
 
@@ -38,19 +40,19 @@ To give you an idea how this works, let's take a look at how an example ``transf
 .. code-block:: python
 
    import skbio
-   
+
    from ..plugin_setup import plugin
    from . import LSMatFormat
-   
-   
+
+
    @plugin.register_transformer
    def _1(data: skbio.DistanceMatrix) -> LSMatFormat:
        ff = LSMatFormat()
        with ff.open() as fh:
            data.write(fh, format='lsmat')
        return ff
-   
-   
+
+
    @plugin.register_transformer
    def _2(ff: LSMatFormat) -> skbio.DistanceMatrix:
        return skbio.DistanceMatrix.read(str(ff), format='lsmat', verify=False)
@@ -59,4 +61,3 @@ To give you an idea how this works, let's take a look at how an example ``transf
 These transformers define how an ``skbio.DistanceMatrix`` object is transformed into an ``LSMatFormat`` object (the underlying format of the data in a ``DistanceMatrix[phylogenetic]`` artifact, as defined in q2-types).
 
 So QIIME 2 recognizes (in the function annotation) that it has an incoming ``skbio.DistanceMatrix``, which it transforms (via the registered ``Transformer``) to ``LSMatFormat`` and packages into a ``DistanceMatrix[phylogenetic]`` artifact (as defined in the ``Method`` registration). Easy as 🎂.
-

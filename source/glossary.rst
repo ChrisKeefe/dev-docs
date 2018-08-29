@@ -16,10 +16,13 @@ it without the accompanying context provided by the rest of this documentation.
      that directory.
 
    Artifact
-     A QIIME 2 :term:`Result` that countains data to operate on.
+     A QIIME 2 :term:`Result` that contains data to operate on. Artifacts are
+     produced by QIIME 2 :term: `actions <Action>` and can be used as inputs to
+     QIIME 2 *methods* or *visualizers*. Artifacts typically have the extension
+     ``.qza`` when written to file.
 
    Deployment
-     An installation of QIIME 2 as well as zero-or-more :term:`interfaces
+     An installation of QIIME 2 along with zero-or-more :term:`interfaces
      <Interface>` and :term:`plugins <Plugin>`.
 
    Directory Format
@@ -71,9 +74,10 @@ it without the accompanying context provided by the rest of this documentation.
      useful).
 
    Pipeline
-     A pipeline accepts some combination of QIIME 2 :term:`artifacts
-     <Artifact>` and :term:`parameters <Parameter>` as :term:`input`, and
-     produces one or more QIIME 2 :term:`artifacts <Artifact>` and/or
+     An :term: `action` which combines two or more existing :term: `
+     actions <Action>`. Pipelines accept some combination of QIIME 2 :term:`
+     artifacts <Artifact>` and :term:`parameters <Parameter>` as :term:`input`,
+     and produce one or more QIIME 2 :term:`artifacts <Artifact>` and/or
      :term:`visualizations <Visualization>` as :term:`output`.
 
    Plugin

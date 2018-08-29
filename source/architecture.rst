@@ -15,7 +15,7 @@ At the highest level, there are three kinds of components in QIIME 2:
 .. figure:: img/simple_component_diagram.svg
    :alt: Box and Arrow diagram of QIIME 2 components
 
-   Interfaces only interact with plugins through the framework, which will invoke plugin behavior as needed.
+   Interfaces only interact with plugins through the framework, which invokes plugin behavior as needed.
    Solid arrows are direct dependency.
    Dash-dotted arrows are a deferred dependency (via entry-point).
 
@@ -45,13 +45,13 @@ A more complete version of the above figure is found below:
    Text within angle-brackets (`<>`) indicate a Python package/import name.
 
 Here we observe that interfaces use a particular sub-component of the framework called the SDK.
-We also see that one of the interfaces is built into the framework itself (the Artifact API), however it is not any more privileged compared to any of the other interfaces, and none of the other interfaces use it directly.
+We also see that one of the interfaces is built into the framework itself (the Artifact API). However, this interface is not more privileged than any of the other interfaces, and none of the other interfaces use it directly.
 
-Looking now at the plugins we see that they use a sub-component of the framework called the Plugin API.
+Looking now at the plugins, we see that they use a sub-component of the framework called the Plugin API.
 This is responsible for constructing and registering the relevant SDK objects for use by interfaces.
 We also see that plugins can depend on other plugins.
 
-At this point the rough picture of how an interface uses a plugin can be seen.
+At this point, the rough picture of how an interface uses a plugin can be seen.
 Plugins are loaded by the framework's SDK via an entry-point (more on that later).
 This in turn causes the plugin code to interact with the Plugin API, which constructs SDK objects.
 These SDK objects are then introspected and manipulated by any number of Interfaces.
@@ -93,7 +93,7 @@ Summary
 In this example we see that the activation of each component is strictly nested.
 It forms a sort of "onion of responsibility" between the component layers.
 We also note that the Interface waits for the task to finish before becoming inactive; there are other modes of calling actions which are asynchronous and can be used instead.
-In either case, we see that each component is successively responsible for less tasks which become more specific as we move to the right.
+In either case, we see that each component is successively responsible for fewer tasks which become more specific as we move to the right.
 
 The end result is:
   - The Interface need only care about communicating with the User.
