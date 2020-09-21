@@ -163,10 +163,23 @@ directory formats in QIIME 2:
 
 Provenance
 ----------
-TODO:
+By using a flexible, directory-based structure for data persistence, QIIME 2 is
+able to store metadata about how the data was generated (provenance) alongside
+the data itself. Notably, each Artifact contains provenance information about
+*every prior QIIME 2 Action* that contributed to its creation, from `import` to
+the most recent step.
+
+Every Artifact's root directory contains a subdirectory named
+`/provenance/`, containing the following:
+- `metadata.yaml` - a copy of the metadata describing the type and format of this Artifact
+- `VERSION` - a description of the version of QIIME 2 used to generate this Artifact
+- `citations.bib` - BibTeX-formatted citations registered to this Artifact.
+- `/action/` - holds metadata describing the Action that generated this artifact, including but not limited to:
+   - `action.yaml` - a yaml description of the action
+   - Action-relevant metadata
+- `/artifacts/` - UUID-labeled subdirectories, containing the above documents for every Artifact involved in the analysis to this point. NOTE: `/data/` is not captured here; Artifacts would rapidly grow to unusable size if it were.
 
 .. toctree::
    :maxdepth: 2
 
    provenance
-
